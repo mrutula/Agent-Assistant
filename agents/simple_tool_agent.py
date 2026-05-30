@@ -1,6 +1,7 @@
 from openai import OpenAI
 import load_env_variables as s
 import json
+from tools import get_calculator, get_daily_astrology
 
 
 # step 1: Define a list of tools agent can call
@@ -28,40 +29,31 @@ tools = [
             "required": ["num1", "num2", "operation"],
 
         }
+    },
+    {
+        "type": "function",
+        "name": "get_daily_astrology",
+        "description": "Function that provides a daily horoscope based on the user's astrology sign.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "astrology_sign": {
+                    "type": "string",
+                    "description": "The user's astrology sign (e.g., 'aries', 'taurus', 'gemini', etc.)."
+                }
+            },
+            "required": ["astrology_sign"]
+        }
 
     }
 ]
 
-# define the function that the agent can call
-def get_calculator(num1: int, num2: int, operation: str) -> str:
-    """
-    A calculator tool that can perform basic arithmetic operations.
 
-    Parameters:
-    - num1: The first number for the calculation.
-    - num2: The second number for the calculation.
-    - operation: The arithmetic operation to perform. Supported operations are 'add', 'subtract', 'multiply', and 'divide'.
 
-    Returns:
-    - A string describing the result of the calculation or an error message if the operation is unsupported or if there is a division by zero.
-    """
-    if operation == "add":
-        return f"The result of adding {num1} and {num2} is {num1 + num2}."
-    elif operation == "subtract":
-        return f"The result of subtracting {num2} from {num1} is {num1 - num2}."
-    elif operation == "multiply":
-        return f"The result of multiplying {num1} and {num2} is {num1 * num2}."
-    elif operation == "divide":
-        if num2 != 0:
-            return f"The result of dividing {num1} by {num2} is {num1 / num2}."
-        else:
-            return "Error: Division by zero is not allowed."
-    else:
-        return "Error: Unsupported operation. Please use 'add', 'subtract', 'multiply', or 'divide'."
-
+user_input = input("Ask a question to the agent: ")
 # Create a running input list we will add to over time
 input_list = [
-    {"role": "user",  "content": "What is 5 multiplied by 3?"}
+    {"role": "user",  "content": user_input}
     ]
 
 client = OpenAI(api_key=s.openai_api_key)
@@ -87,6 +79,16 @@ for item in response.output:
             result = get_calculator(arguments.get('num1'), arguments.get('num2'), arguments.get('operation'))
 
             #provide function call result back to the model
+            input_list.append({
+                "type": "function_call_output",
+                "call_id": item.call_id,
+                "output": result
+            })
+        elif item.name == 'get_daily_astrology':
+            # load the arguments for the function call
+            astrology_sign = json.loads(item.arguments).get('astrology_sign')
+            result = get_daily_astrology(astrology_sign)
+
             input_list.append({
                 "type": "function_call_output",
                 "call_id": item.call_id,
