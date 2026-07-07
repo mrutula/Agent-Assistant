@@ -1,6 +1,7 @@
 import inspect
 from loguru import logger
 
+
 def is_valid_match(func_name: callable, data_dict: dict) -> bool:
     """
     Checks if all the required parameters of the function are present in the data dictionary.
@@ -17,9 +18,11 @@ def is_valid_match(func_name: callable, data_dict: dict) -> bool:
         params = inspect.signature(func_name).parameters
 
         # Required keys for function
-        required_keys = {name for name, p in params.items() if p.default is inspect.Parameter.empty}
+        required_keys = {
+            name for name, p in params.items() if p.default is inspect.Parameter.empty
+        }
 
-        # all keys 
+        # all keys
         all_keys = params.keys()
 
         # provided keys
@@ -31,11 +34,11 @@ def is_valid_match(func_name: callable, data_dict: dict) -> bool:
 
         # any additional keys?
         extra = provided_keys - all_keys
-        
+
         if extra:
-            logger.error("Additional arguments provided") 
+            logger.error("Additional arguments provided")
             return False
-        
+
         if missing:
             logger.error("Missing required arguments")
             return False

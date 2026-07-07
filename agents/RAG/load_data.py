@@ -17,9 +17,9 @@ def load_pdf_data() -> None:
     try:
         pdf_path = Path(s.data_folder) / "pdf_files" / f"{s.file_name}.pdf"
         pdf_text_path = Path(s.data_folder) / "pdf_text" / f"{s.file_name}.txt"
-        
-        # create a pdf reader object 
-        reader  = PdfReader(pdf_path)
+
+        # create a pdf reader object
+        reader = PdfReader(pdf_path)
 
         # initialize an empty string to store the text
         text = ""

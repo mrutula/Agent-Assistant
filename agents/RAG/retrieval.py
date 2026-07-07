@@ -3,13 +3,15 @@ from langchain_community.vectorstores import FAISS
 from loguru import logger
 from pathlib import Path
 from langchain_openai import OpenAIEmbeddings
+
 # from langchain_community.retrievers import BM25Retriever
 # from langchain_classic.retrievers import EnsembleRetriever
 from openai import OpenAI
-from langchain_classic.retrievers.contextual_compression import ContextualCompressionRetriever
+from langchain_classic.retrievers.contextual_compression import (
+    ContextualCompressionRetriever,
+)
 from langchain_classic.retrievers.document_compressors import CrossEncoderReranker
 from langchain_community.cross_encoders import HuggingFaceCrossEncoder
-
 
 
 def def_rerank_chunks(retriever: str, query: str) -> list:
@@ -23,8 +25,10 @@ def def_rerank_chunks(retriever: str, query: str) -> list:
         list: A list of reranked text chunks based on their relevance to the query.
     """
     try:
-        # define the model; 
-        model = HuggingFaceCrossEncoder(model_name="cross-encoder/ms-marco-MiniLM-L-6-v2")
+        # define the model;
+        model = HuggingFaceCrossEncoder(
+            model_name="cross-encoder/ms-marco-MiniLM-L-6-v2"
+        )
         # Wraps your model into a reranker component
         compressor = CrossEncoderReranker(model=model, top_n=3)
         compression_retriever = ContextualCompressionRetriever(
@@ -36,10 +40,11 @@ def def_rerank_chunks(retriever: str, query: str) -> list:
         logger.error(f"Error in def_rerank_chunks: {e}")
         return []
 
+
 def get_relevant_chunks(query: str, text: list, k: int = 3) -> str:
     """
     Retrieve the most relevant text chunks from the vector database based on a query.
-    Hybrid retrieval approach: 
+    Hybrid retrieval approach:
 
     parameters:
         query (str): The user's query for which relevant chunks are to be retrieved.
@@ -50,16 +55,20 @@ def get_relevant_chunks(query: str, text: list, k: int = 3) -> str:
     """
     try:
         # embedding model initialization (same as used during embedding creation)
-        embedding_model = OpenAIEmbeddings(model="text-embedding-3-small", openai_api_key=s.openai_api_key)
-        
+        embedding_model = OpenAIEmbeddings(
+            model="text-embedding-3-small", openai_api_key=s.openai_api_key
+        )
+
         # load the vector embeddings
-        new_db = FAISS.load_local(Path(s.data_folder)/ "vector" / "my_faiss_index",
-                         embeddings=embedding_model,
-                         allow_dangerous_deserialization=True)
+        new_db = FAISS.load_local(
+            Path(s.data_folder) / "vector" / "my_faiss_index",
+            embeddings=embedding_model,
+            allow_dangerous_deserialization=True,
+        )
 
         # create a retriever from the loaded vector database
         faiss_retriever = new_db.as_retriever(search_kwargs={"k": k})
-  
+
         # BM25 Retriever (alternative to vector search)
         # bm25_retriever = BM25Retriever.from_texts(text)
         # bm25_retriever.k = k
@@ -72,12 +81,14 @@ def get_relevant_chunks(query: str, text: list, k: int = 3) -> str:
         # Retrieve the top k relevant chunks using the FAISS retriever
         # top_chunks = faiss_retriever.invoke(query)
 
-        logger.info(f"The top {k} relevant chunks retrieved successfully for the query: '{query}' are as follows:")
+        logger.info(
+            f"The top {k} relevant chunks retrieved successfully for the query: '{query}' are as follows:"
+        )
 
         # reranking the retrieved chunks based on their relevance to the query (optional step, can be skipped if not needed)
 
-        top_chunks = def_rerank_chunks(faiss_retriever, query) 
- 
+        top_chunks = def_rerank_chunks(faiss_retriever, query)
+
         # logging the retrieved chunks to a file for evaluation purposes
         with open(Path(s.data_folder) / "retrieval" / "retrieved_chunks.txt", "a") as f:
             f.write(f"Query: {query}\n")
@@ -85,7 +96,12 @@ def get_relevant_chunks(query: str, text: list, k: int = 3) -> str:
                 f.write(f"Chunk {i}: {chunk.page_content[:200]}...\n")
             f.write("\n")
 
-        top_chunk_text = "\n".join([f"chunk {i + 1}: {chunk.page_content}" for i, chunk in enumerate(top_chunks)])
+        top_chunk_text = "\n".join(
+            [
+                f"chunk {i + 1}: {chunk.page_content}"
+                for i, chunk in enumerate(top_chunks)
+            ]
+        )
         return top_chunk_text
     except Exception as e:
         logger.error(f"Error retrieving relevant chunks: {e}")
@@ -104,7 +120,9 @@ def get_grounded_llm_response(query: str, text: list) -> str:
     """
     relevant_chunks = get_relevant_chunks(query, text, k=8)
     if not relevant_chunks:
-        logger.error( "Sorry, I couldn't find any relevant information to answer your query.")
+        logger.error(
+            "Sorry, I couldn't find any relevant information to answer your query."
+        )
         return "Couldn't find any relevant information to answer your query."
 
     prompt = f"""You are an assistant that answers using the provided context. You may infer answers if they are clearly implied by the context.If the answer is not present or implied, say "I don't know"."
@@ -118,8 +136,8 @@ def get_grounded_llm_response(query: str, text: list) -> str:
             """
     client = OpenAI(api_key=s.openai_api_key)
     response = client.responses.create(
-    model="gpt-4o-mini",
-    input=prompt,
+        model="gpt-4o-mini",
+        input=prompt,
     )
 
     logger.info("RAG: LLM response generated successfully.")

@@ -1,5 +1,3 @@
-
-
 # define the function that the agent can call
 def get_calculator(num1: int, num2: int, operation: str) -> str:
     """
@@ -13,11 +11,11 @@ def get_calculator(num1: int, num2: int, operation: str) -> str:
     Returns:
     - A string describing the result of the calculation or an error message if the operation is unsupported or if there is a division by zero.
     """
-    if operation in ("add" , '+') :
+    if operation in ("add", "+"):
         return f"The result of adding {num1} and {num2} is {num1 + num2}."
-    elif operation in ("subtract", '-'):
+    elif operation in ("subtract", "-"):
         return f"The result of subtracting {num2} from {num1} is {num1 - num2}."
-    elif operation in ("multiply", '*'):
+    elif operation in ("multiply", "*"):
         return f"The result of multiplying {num1} and {num2} is {num1 * num2}."
     elif operation in ("divide", "/"):
         if num2 != 0:
@@ -26,6 +24,7 @@ def get_calculator(num1: int, num2: int, operation: str) -> str:
             return "Error: Division by zero is not allowed."
     else:
         return "Error: Unsupported operation. Please use 'add', 'subtract', 'multiply', or 'divide'."
+
 
 def get_daily_astrology(astrology_sign: str) -> str:
     """
@@ -37,7 +36,7 @@ def get_daily_astrology(astrology_sign: str) -> str:
     - A string containing the horoscope for the given astrology sign or an error message if the sign is invalid.
     """
 
-    astrology_dictionary ={
+    astrology_dictionary = {
         "aries": "Today is a great day for new beginnings. Take initiative and embrace change.",
         "taurus": "Focus on your finances today. It's a good time to budget and plan for the future.",
         "gemini": "Communication is key today. Reach out to friends and family for support.",
@@ -49,7 +48,7 @@ def get_daily_astrology(astrology_sign: str) -> str:
         "sagittarius": "Adventure awaits you today. Step out of your comfort zone and explore new opportunities.",
         "capricorn": "Hard work pays off today. Stay focused and determined to achieve your goals.",
         "aquarius": "Innovation is in the air today. Embrace new ideas and think outside the box.",
-        "pisces": "Trust your intuition today. It's a good time to reflect and connect with your inner self."
+        "pisces": "Trust your intuition today. It's a good time to reflect and connect with your inner self.",
     }
 
     return f"For {astrology_sign}, {astrology_dictionary.get(astrology_sign.lower(), 'Invalid astrology sign. Please provide a valid sign.')}"
