@@ -4,10 +4,11 @@ import load_env_variables as s
 import json
 from utils import is_valid_match
 from loguru import logger
+from RAG.run import get_rag_tool
 
 answer = ""
 failure_reason = ""  # tracker for failure
-tools = {"get_calculator": get_calculator, "get_daily_astrology": get_daily_astrology}
+tools = {"get_calculator": get_calculator, "get_daily_astrology": get_daily_astrology, "get_rag_tool": get_rag_tool}
 # define openai client
 client = OpenAI(api_key=s.openai_api_key)
 

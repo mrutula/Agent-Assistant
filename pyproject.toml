@@ -9,5 +9,17 @@ dependencies = [
     "langchain>=1.2.15",
     "loguru==0.7.3",
     "openai>=2.32.0",
-    "ruff==0.15.20"
+    "ruff==0.15.20",
+    "faiss-cpu>=1.13.2",
+    "langchain>=1.2.15",
+    "langchain-classic>=1.0.3",
+    "langchain-community>=0.4.1",
+    "langchain-openai>=1.1.12",
+    "langchain-text-splitters>=1.1.1",
+    "numpy>=2.4.4",
+    "pathlib==1.0.1",
+    "pypdf==6.9.2",
+    "rank-bm25>=0.2.2",
+    "sentence-transformers>=5.4.0",
+    "tiktoken>=0.12.0",
 ]

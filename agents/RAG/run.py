@@ -1,13 +1,13 @@
 from loguru import logger
-from RAG.text_chunking import semantic_text_chunking
-from RAG.embeddings import embedding_and_vector_store
-from RAG.retrieval import get_grounded_llm_response
-from RAG.load_data import load_pdf_data
+from text_chunking import semantic_text_chunking
+from embeddings import embedding_and_vector_store
+from retrieval import get_grounded_llm_response
+from load_data import load_pdf_data
 from pathlib import Path
 import agents.load_env_variables as s
 
 
-def get_info_rag(user_input: str) -> str:
+def get_rag_tool(user_input: str) -> str:
     """
     Retrieve information from internal documentation using RAG
 
