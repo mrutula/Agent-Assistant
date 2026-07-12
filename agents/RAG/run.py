@@ -7,7 +7,7 @@ from pathlib import Path
 import agents.load_env_variables as s
 
 
-def get_rag_tool(user_input: str) -> str:
+def search_knowledge_base(user_input: str) -> str:
     """
     Retrieve information from internal documentation using RAG
 

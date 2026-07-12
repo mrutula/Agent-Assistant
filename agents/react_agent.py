@@ -8,7 +8,7 @@ from RAG.run import get_rag_tool
 
 answer = ""
 failure_reason = ""  # tracker for failure
-tools = {"get_calculator": get_calculator, "get_daily_astrology": get_daily_astrology, "get_rag_tool": get_rag_tool}
+tools = {"get_calculator": get_calculator, "get_daily_astrology": get_daily_astrology, "search_knowledge_base": search_knowledge_base}
 # define openai client
 client = OpenAI(api_key=s.openai_api_key)
 

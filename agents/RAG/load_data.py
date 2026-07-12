@@ -3,6 +3,7 @@ from pypdf import PdfReader
 from pathlib import Path
 import agents.load_env_variables as s
 from loguru import logger
+import inspect
 
 
 def load_pdf_data() -> None:
